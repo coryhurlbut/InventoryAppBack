@@ -6,7 +6,7 @@ const ItemLog       = require('../models/ItemLog');
 const verify        = require('./verifyToken');
 
 //Gets all item logs
-router.get('/', async (req, res) => {
+router.get('/', verify, async (req, res) => {
     try {
         const itemLogs = await ItemLog.find()
         res.json(itemLogs);
@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
     };
 });
 //Gets itemLogs by item id
-router.get('/item/:id', async (req, res) => {
+router.get('/item/:id', verify, async (req, res) => {
     try {
         const itemLogs = await ItemLog.find({itemId: req.params.id});
         res.json(itemLogs);
@@ -24,7 +24,7 @@ router.get('/item/:id', async (req, res) => {
     };
 });
 //Gets itemLogs by user id
-router.get('/user/:id', async (req, res) => {
+router.get('/user/:id', verify, async (req, res) => {
     try {
         const itemLogs = await ItemLog.find({userId: req.params.id});
         res.json(itemLogs);
@@ -33,7 +33,7 @@ router.get('/user/:id', async (req, res) => {
     };
 });
 //Creates an itemLog 
-router.post('/', async (req, res) => {
+router.post('/', verify, async (req, res) => {
     const itemLog = new ItemLog({
         itemId:         req.body.itemId,
         userId:         req.body.userId,
@@ -52,7 +52,7 @@ router.post('/', async (req, res) => {
     };
 });
 //Deletes an itemLog
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verify, async (req, res) => {
     try {
         const removedItemLog = await ItemLog.deleteOne({_id: req.params.id});
     } catch (err) { 

@@ -5,7 +5,7 @@ const ItemAssoc =   require('../models/ItemAssoc');
 const verify    =   require('./verifyToken');
 
 //Gets all items
-router.get('/', async (req, res) => {
+router.get('/', verify, async (req, res) => {
     try {
         const items = await Item.find()
         res.json(items);
@@ -35,7 +35,7 @@ router.get('/unavailable', async (req, res) => {
 });
 
 //Gets item by id
-router.get('/:id', async (req, res) => {
+router.get('/:id', verify, async (req, res) => {
     try {
         const item = await Item.findById(req.params.id);
         res.json(item);
@@ -45,9 +45,8 @@ router.get('/:id', async (req, res) => {
 });
 
 //Creates an item 
-router.post('/', async (req, res) => {
+router.post('/', verify, async (req, res) => {
     const item = new Item({
-        id:                 req.body.id,
         name:               req.body.name,
         description:        req.body.description,
         serialNumber:       req.body.serialNumber,
@@ -69,7 +68,7 @@ router.post('/', async (req, res) => {
 });
 
 //Deletes an item
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verify, async (req, res) => {
     try {
         const removedItem = await Item.deleteOne({_id: req.params.id});
     } catch (err) { 
@@ -78,12 +77,11 @@ router.delete('/:id', async (req, res) => {
 });
 
 //Updates an item
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', verify, async (req, res) => {
     try {
         const updatedItem = await Item.updateOne(
             { _id: req.params.id }, 
-            { $set: {
-                id:                 req.body.id,
+            {
                 name:               req.body.name,
                 description:        req.body.description,
                 serialNumber:       req.body.serialNumber,
@@ -93,7 +91,6 @@ router.patch('/:id', async (req, res) => {
                 available:          req.body.available,
                 servicable:         req.body.servicable,
                 isChild:            req.body.isChild
-                }
             }
         );
         res.json(updatedItem);

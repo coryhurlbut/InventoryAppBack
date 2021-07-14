@@ -7,7 +7,7 @@ const { registerValidation }    = require('../validation');
 
 
 //Gets all users
-router.get('/', async (req, res) => {
+router.get('/', verify, async (req, res) => {
     try {
         const users = await User.find();
         res.json(users);
@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
 });
 
 //Gets user by id
-router.get('/:id', async (req, res) => {
+router.get('/:id', verify, async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
         res.json(user);
@@ -28,17 +28,18 @@ router.get('/:id', async (req, res) => {
 });
 
 //Creates a User
-router.post('/', async (req, res) => {
+router.post('/', verify, async (req, res) => {
     //hash password
+    console.log(req)
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
     //validate input data
     const {error} = registerValidation(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
+    if (error) return res.status(400).send('This no work');
 
     //check if user exists
-    const userExists = await User.findOne({firstName: req.body.firstName, lastName: req.body.lastName});
+    const userExists = await User.find().where({firstName: req.body.firstName}).where({ lastName: req.body.lastName });
     if (userExists) return res.status(400).send('User already exists');
     
     //create new user
@@ -62,7 +63,7 @@ router.post('/', async (req, res) => {
 });
 
 //Deletes a User
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verify, async (req, res) => {
     try {
         const removedUser = await User.deleteOne({_id: req.params.id});
         res.json(removedUser);
@@ -72,7 +73,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 //Updates a user
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', verify, async (req, res) => {
     try {
         const updatedUser = await User.updateOne(
             { _id: req.params.id },

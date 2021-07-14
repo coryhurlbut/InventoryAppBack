@@ -18,7 +18,6 @@ const itemRoute         = require('./routes/itemRoutes');
 const itemAssocRoute    = require('./routes/itemAssocRoutes');
 const itemLogRoute      = require('./routes/itemLogRoutes');
 const adminLogRoute     = require('./routes/adminLogRoutes');
-const { nextTick } = require('process');
 
 //Initialize express app and load environment variables
 app = express();
@@ -36,7 +35,6 @@ var credentials = {
 app.use(express.json());    //Formats all response data to JSON
 app.use(cors());            //Accepts all CORS requests
 app.options('*', cors());
-
 
 //Route Middlewares - routes requests with url indicated to route indicated
 app.use('/auth',            authRoute);

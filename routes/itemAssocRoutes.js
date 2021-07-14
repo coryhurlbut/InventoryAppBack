@@ -32,7 +32,7 @@ router.get('/child/:childId', async (req, res) => {
     };
 });
 //Creates an item association 
-router.post('/', async (req, res) => {
+router.post('/', verify, async (req, res) => {
     const itemAssoc = new ItemAssoc({
         parentId:   req.body.parentId,
         childId:    req.body.childId
@@ -47,7 +47,7 @@ router.post('/', async (req, res) => {
     };
 });
 //Deletes an item association
-router.delete('/:parentId/:childId', async (req, res) => {
+router.delete('/:parentId/:childId', verify, async (req, res) => {
     try {
         const removedItemAssoc = await ItemAssoc.deleteOne({parentId: req.params.parentid, childId: req.params.childId});
         res.json(removedItemAssoc);

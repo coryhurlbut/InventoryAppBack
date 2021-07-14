@@ -4,7 +4,7 @@ const AdminLog  = require('../models/AdminLog');
 const verify    = require('./verifyToken');
 
 //Gets all admin logs
-router.get('/', async (req, res) => {
+router.get('/', verify, async (req, res) => {
     try {
         const adminLogs = await AdminLog.find();
         res.json(adminLogs);
@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
 });
 
 //Gets adminLogs by item id
-router.get('/item/:id', async (req, res) => {
+router.get('/item/:id', verify, async (req, res) => {
     try {
         const adminLogs = await AdminLog.find({itemId: req.params.id});
         res.json(adminLogs);
@@ -24,7 +24,7 @@ router.get('/item/:id', async (req, res) => {
 });
 
 //Gets adminLogs by user id
-router.get('/user/:id', async (req, res) => {
+router.get('/user/:id', verify, async (req, res) => {
     try {
         const adminLogs = await AdminLog.find({userId: req.params.id});
         res.json(adminLogs);
@@ -34,7 +34,7 @@ router.get('/user/:id', async (req, res) => {
 });
 
 //Creates an adminLog 
-router.post('/', async (req, res) => {
+router.post('/', verify, async (req, res) => {
     const adminLog = new AdminLog({
         itemId:     req.body.itemId,
         userId:     req.body.userId,
@@ -54,7 +54,7 @@ router.post('/', async (req, res) => {
 });
 
 //Deletes an adminLog by Id
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verify, async (req, res) => {
     try {
         const removedAdminLog = await AdminLog.deleteOne({_id: req.params.id});
         res.json(removedAdminLog);
