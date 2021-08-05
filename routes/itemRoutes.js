@@ -4,17 +4,7 @@ const Item      =   require('../models/Item');
 const ItemAssoc =   require('../models/ItemAssoc');
 const verify    =   require('./verifyToken');
 
-//Gets all items
-router.get('/', verify, async (req, res) => {
-    try {
-        const items = await Item.find()
-        res.json(items);
-    } catch (err) {
-        res.json({ message: err.message});
-    };
-});
-
-//Gets all items
+//Gets all available items
 router.get('/available', async (req, res) => {
     try {
         const items = await Item.find().where({ available: true }).where({ servicable: true })
@@ -24,7 +14,7 @@ router.get('/available', async (req, res) => {
     };
 });
 
-//Gets all items
+//Gets all unavailable items
 router.get('/unavailable', async (req, res) => {
     try {
         const items = await Item.find({available: false})
