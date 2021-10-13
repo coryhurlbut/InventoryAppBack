@@ -8,17 +8,15 @@ const {loginValidation} = require('../validation');
 let refreshTokens = [];
 
 router.post('/refresh', (req, res) => {
-    console.log('hit')
     const refreshToken = req.body.refreshToken;
-    console.log('refresh', req.body)
-    if (refreshToken == null) return res.status(401).send('No Token');
-    if (!refreshTokens.includes(refreshToken)) return res.status(403).send('No matching token');
-
+    if (refreshToken === "undefined") return res.status(401).send('No Token');
+    if (!refreshTokens.includes(refreshToken)) return res.status(403).send({"message": "No matching token"});
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-        if (err) return res.sendStatus(403);
+        if (err) {
+            return res.status(403).send('Verification Error');
+        }
         const accessToken = generateAccessToken(user);
-        console.log(user.user)
-        res.json({accessToken: accessToken, refreshToken: refreshToken, user: user.user});
+        res.json({accessToken: accessToken, user: user.user});
     });
 });
 
@@ -41,7 +39,6 @@ router.post('/login', async (req, res) => {
     if (!validPassword) return res.status(400).send('Invalid password');
 
     //Create and assign a token
-    
     const accessToken = generateAccessToken(user);
     const refreshToken = jwt.sign({user: user}, process.env.REFRESH_TOKEN_SECRET);
     refreshTokens.push(refreshToken);
@@ -49,7 +46,7 @@ router.post('/login', async (req, res) => {
 });
 
 function generateAccessToken(user) {
-    return jwt.sign({user: user}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '180s' });
+    return jwt.sign({user: user}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5s' });
 };
 
 module.exports = router;

@@ -8,10 +8,16 @@ const { registerValidation }    = require('../validation');
 
 //Gets all users
 router.get('/', verify, async (req, res) => {
+    console.log('userRoute1')
     try {
+        console.log('userRoute2')
+
         const users = await User.find();
+        console.log(users)
         res.json(users);
     } catch (err) {
+        console.log('userRoute3')
+
         res.json({ message: err.message});
     };
 });
