@@ -39,14 +39,15 @@ router.post('/', verify, async (req, res) => {
     console.log(req)
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
-
+    
     //validate input data
     const {error} = registerValidation(req.body);
-    if (error) return res.status(400).send('This no work');
+    if (error != undefined) return res.status(400).send(error.details[0].message);
 
-    //check if user exists
+    //check if user exists  something is wrong with this, getting this code when i do not submit duplicate
     const userExists = await User.find().where({firstName: req.body.firstName}).where({ lastName: req.body.lastName });
-    if (userExists) return res.status(400).send('User already exists');
+    if (userExists.length !== 0) return res.status(400).send('User already exists');
+    
     
     //create new user
     const user = new User({

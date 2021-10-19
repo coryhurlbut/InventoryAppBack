@@ -55,6 +55,7 @@ router.post('/', verify, async (req, res) => {
 router.delete('/:id', verify, async (req, res) => {
     try {
         const removedItemLog = await ItemLog.deleteOne({_id: req.params.id});
+        res.json(removedItemLog);
     } catch (err) { 
         res.json({ message: err });
     };

@@ -14,7 +14,28 @@ router.get('/available', async (req, res) => {
     };
 });
 
-//Gets all unavailable items
+router.get('/parents', async (req, res) => {
+    try{
+        const items = await Item.find().where({ isChild: false })
+        res.json(items);
+    }
+    catch (err){
+        res.json({ message: err.message });
+    };
+});
+
+router.get('/parents', async (req, res) => {
+    try{
+        const items = await Item.find().where({ isChild: false })
+        res.json(items);
+    }
+    catch (err){
+        res.json({ message: err.message });
+    };
+});
+
+
+//Gets all items
 router.get('/unavailable', async (req, res) => {
     try {
         const items = await Item.find({available: false})
@@ -71,7 +92,8 @@ router.delete('/:id', verify, async (req, res) => {
 router.delete('delete', verify, async (req, res) => {
     try {
         const removedItems = await Item.deleteMany({_id: { $in: req.body} });
-        res.json(removedItems)
+        res.json(removedItems);
+        res.json(removedItem);
     } catch (err) { 
         res.json({ message: err });
     };
