@@ -79,22 +79,49 @@ router.post('/', verify, async (req, res) => {
 });
 
 //Deletes an item
-router.delete('/:id', verify, async (req, res) => {
+// router.delete('/:id', verify, async (req, res) => {
+//     try {
+//         const removedItem = await Item.deleteOne({_id: req.params.id});
+//         res.json(removedItem)
+//     } catch (err) { 
+//         res.json({ message: err });
+//     };
+// });
+
+//Deletes items
+router.delete('/delete', verify, async (req, res) => {
     try {
-        const removedItem = await Item.deleteOne({_id: req.params.id});
-        res.json(removedItem)
+        console.log(req.body);
+        const removedItems = await Item.deleteMany({_id: { $in: req.body} });
+        res.json(removedItems);
     } catch (err) { 
         res.json({ message: err });
     };
 });
 
-//Deletes items
-router.delete('delete', verify, async (req, res) => {
+
+//Signs out items
+router.patch('/signout', verify, async (req, res) => {
     try {
-        const removedItems = await Item.deleteMany({_id: { $in: req.body} });
-        res.json(removedItems);
-        res.json(removedItem);
-    } catch (err) { 
+        const itemsSignedOut = await Item.updateMany(
+            { _id: { $in: req.body } }, 
+            { available: false }
+        );
+        res.json(itemsSignedOut);
+    } catch (err) {
+        res.json({ message: err });
+    };
+});
+
+//Signs in items
+router.patch('/signin', verify, async (req, res) => {
+    try {
+        const itemsSignedIn = await Item.updateMany(
+            { _id: { $in: req.body } }, 
+            { available: true }
+        );
+        res.json(itemsSignedIn);
+    } catch (err) {
         res.json({ message: err });
     };
 });
@@ -117,32 +144,6 @@ router.patch('/:id', verify, async (req, res) => {
             }
         );
         res.json(updatedItem);
-    } catch (err) {
-        res.json({ message: err });
-    };
-});
-
-//Signs out items
-router.patch('/signout', verify, async (req, res) => {
-    try {
-        const itemSignedOut = await Item.updateMany(
-            { _id: { $in: req.body.itemIds } }, 
-            { available: false }
-        );
-        res.json(itemSignedOut);
-    } catch (err) {
-        res.json({ message: err });
-    };
-});
-
-//Signs in items
-router.patch('/signin', verify, async (req, res) => {
-    try {
-        const itemsSignedIn = await Item.updateMany(
-            { _id: { $in: req.body } }, 
-            { available: true }
-        );
-        res.json(itemsSignedIn);
     } catch (err) {
         res.json({ message: err });
     };

@@ -8,15 +8,11 @@ const { registerValidation }    = require('../validation');
 
 //Gets all users
 router.get('/', verify, async (req, res) => {
-    console.log('userRoute1')
     try {
-        console.log('userRoute2')
 
         const users = await User.find();
-        console.log(users)
         res.json(users);
     } catch (err) {
-        console.log('userRoute3')
 
         res.json({ message: err.message});
     };
@@ -36,7 +32,6 @@ router.get('/:id', verify, async (req, res) => {
 //Creates a User
 router.post('/', verify, async (req, res) => {
     //hash password
-    console.log(req)
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
     

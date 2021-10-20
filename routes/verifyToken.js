@@ -15,14 +15,11 @@ module.exports = function (req, res, next) {
     // } catch (error) {
     //     res.status(400).send('Invalid token');
     // };
-    console.log(req.headers)
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-    console.log(token, authHeader)
     if (token === 'null') return res.status(401).send('No token sent');
 
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-        console.log('verifyToken', err, user);
         if (err) return res.status(403).send(err.message);
         req.user = user;
         next();
