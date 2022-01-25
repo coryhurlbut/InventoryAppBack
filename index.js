@@ -3,7 +3,6 @@ const express   = require('express');
 const mongoose  = require('mongoose');
 const dotenv    = require('dotenv');
 const https     = require('https');
-const http      = require('http');
 const fs        = require('fs');
 const cors      = require('cors');
 
@@ -24,8 +23,8 @@ app = express();
 dotenv.config();
 
 //Read selfsigned cert and key
-var key = fs.readFileSync(__dirname + '/certs/selfsigned.key');
-var cert = fs.readFileSync(__dirname + '/certs/selfsigned.crt');
+var key     = fs.readFileSync(__dirname + '/certs/selfsigned.key');
+var cert    = fs.readFileSync(__dirname + '/certs/selfsigned.crt');
 var credentials = {
     key: key,
     cert: cert
@@ -43,23 +42,27 @@ app.use('/items',           itemRoute);
 app.use('/itemAssoc',       itemAssocRoute);
 app.use('/logs/itemLogs',   itemLogRoute);
 app.use('/logs/adminLogs',  adminLogRoute);
+ 
+app.use((req, res, next) => {
+    const error = new Error('Route not found');
+    error.status = 404;
+    next(error);
+});
 
-//GET home route
-app.get('/', (req, res) => {
-    res.send('Hello World.');
+app.use((error, req, res, next) => {
+    res.status(error.status || 500);
+    res.json({
+        error: {
+            message: error.message,
+            instance: error.instance || 'unknown',
+            status: error.status
+        }
+    });
 });
 
 //Connect to DB
-mongoose.connect(process.env.DB_CONNECTION, { useNewUrlParser: true },() => {console.log('connected')});
+mongoose.connect(process.env.DB_CONNECTION, { useNewUrlParser: true });
 
 //Create and run https server
 var httpsServer = https.createServer(credentials, app);
-httpsServer.listen(httpsPort, () => {
-    console.log("Https server listening on port : " + httpsPort);
-});
-
-//Create and run http server
-//var httpServer = http.createServer(app);
-// app.listen(httpPort, () => {
-//     console.log("Http server listing on port : " + httpPort)
-// });
+httpsServer.listen(httpsPort);
