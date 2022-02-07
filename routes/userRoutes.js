@@ -62,7 +62,7 @@ router.post('/', verify, async (req, res, next) => {
         lastName:       req.body.lastName,
         userName:       req.body.userName,
         password:       hashedPassword,
-        userRole:       req.body.userRole,
+        userRole:       req.body.userRole.toLowerCase(),
         phoneNumber:    req.body.phoneNumber
     });
 
