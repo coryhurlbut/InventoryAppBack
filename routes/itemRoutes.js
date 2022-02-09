@@ -1,7 +1,6 @@
 const express       = require('express');
 const router        = express.Router();
 const Item          = require('../models/Item');
-const ItemAssoc     = require('../models/ItemAssoc');
 const verify        = require('./verifyToken');
 
 //Gets all available items
@@ -30,19 +29,6 @@ router.get('/unavailable', async (req, res, next) => {
     };
 });
 
-//Gets all parent items
-router.get('/parents', async (req, res, next) => {
-    try{
-        const items = await Item.find().where({ isChild: false });
-        res.json(items);
-    } catch(err) {
-        err.message = "Could not get parent items";
-        err.status = 500;
-        err.instance = `/items/parents`;
-        next(err);
-    };
-});
-
 //Gets item by id
 router.get('/item/:id', async (req, res, next) => {
     try {
@@ -66,8 +52,7 @@ router.post('/', async (req, res, next) => {
         homeLocation:       req.body.homeLocation,
         specificLocation:   req.body.specificLocation,
         available:          req.body.available,
-        servicable:         req.body.servicable,
-        isChild:            req.body.isChild
+        servicable:         req.body.servicable
     });
     
     try {
@@ -149,8 +134,7 @@ router.patch('/:id', async (req, res, next) => {
                 homeLocation:       req.body.homeLocation,
                 specificLocation:   req.body.specificLocation,
                 available:          req.body.available,
-                servicable:         req.body.servicable,
-                isChild:            req.body.isChild
+                servicable:         req.body.servicable
             }
         );
         res.json(updatedItem);

@@ -26,9 +26,6 @@ const ItemSchema = mongoose.Schema({
     },
     servicable: {
         type: Boolean
-    },
-    isChild: {
-        type: Boolean
     }
 });
 
