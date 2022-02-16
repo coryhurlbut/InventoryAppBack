@@ -53,7 +53,6 @@ router.post('/', verify, async (req, res, next) => {
         action:         req.body.action,
         notes:          req.body.notes
     });
-
     try {
         const savedItemLog = await itemLog.save();
         res.json(savedItemLog);
