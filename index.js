@@ -14,7 +14,6 @@ const httpPort = 3000;
 const authRoute         = require('./routes/authRoutes');
 const userRoute         = require('./routes/userRoutes');
 const itemRoute         = require('./routes/itemRoutes');
-const itemAssocRoute    = require('./routes/itemAssocRoutes');
 const itemLogRoute      = require('./routes/itemLogRoutes');
 const adminLogRoute     = require('./routes/adminLogRoutes');
 
@@ -39,7 +38,6 @@ app.options('*', cors());
 app.use('/auth',            authRoute);
 app.use('/users',           userRoute);
 app.use('/items',           itemRoute);
-app.use('/itemAssoc',       itemAssocRoute);
 app.use('/logs/itemLogs',   itemLogRoute);
 app.use('/logs/adminLogs',  adminLogRoute);
  

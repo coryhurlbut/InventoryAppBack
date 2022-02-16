@@ -1,7 +1,6 @@
 const express       = require('express');
 const router        = express.Router();
 const Item          = require('../models/Item');
-const ItemAssoc     = require('../models/ItemAssoc');
 const ItemLog       = require('../models/ItemLog');
 const verify        = require('./verifyToken');
 

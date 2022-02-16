@@ -33,10 +33,6 @@ router.get('/:id', verify, async (req, res, next) => {
 
 //Creates a User
 router.post('/', verify, async (req, res, next) => {
-    //hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(req.body.password, salt);
-    
     //validate input data
     const {error} = registerValidation(req.body);
     if (error != undefined) {
@@ -47,7 +43,7 @@ router.post('/', verify, async (req, res, next) => {
     };
 
     //check if user exists  something is wrong with this, getting this code when i do not submit duplicate
-    const userExists = await User.find().where({firstName: req.body.firstName}).where({ lastName: req.body.lastName });
+    const userExists = await User.find().where({userName: req.body.userName});
     if (userExists.length !== 0) {
         let err = new Error();
         err.message = 'User already exists';
@@ -55,6 +51,10 @@ router.post('/', verify, async (req, res, next) => {
         next(err);
         return;
     };
+
+    //hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(req.body.password, salt);
     
     //create new user
     const user = new User({
@@ -82,10 +82,13 @@ router.post('/', verify, async (req, res, next) => {
 //Deletes a User
 router.delete('/:id', verify, async (req, res, next) => {
     try {
+        if (req.user.user.user._id === req.params.id) {
+            throw req.user.user.user;
+        };
         const removedUser = await User.deleteOne({_id: req.params.id});
         res.json(removedUser);
     } catch (err) { 
-        err.message = "Could not save item";
+        err.message = `Could not delete user ${err._id}`;
         err.status = 400;
         err.instance = `/users/${req.params.id}`;
         next(err);
@@ -95,14 +98,37 @@ router.delete('/:id', verify, async (req, res, next) => {
 //Updates a user
 router.patch('/:id', verify, async (req, res, next) => {
     try {
+        //validate input data
+        const {error} = registerValidation(req.body);
+        if (error != undefined) {
+            error.message = error.details[0].message;
+            error.status = 400;
+            next(error);
+            return;
+        };
+
+        //check if user exists  something is wrong with this, getting this code when i do not submit duplicate
+        const userExists = await User.find().where({userName: req.body.userName});
+        if (userExists.length !== 0) {
+            let err = new Error();
+            err.message = 'User already exists';
+            err.status = 400;
+            next(err);
+            return;
+        };
+
+        //hash password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
         const updatedUser = await User.updateOne(
             { _id: req.params.id },
             {   
                 firstName:      req.body.firstName,
                 lastName:       req.body.lastName,
                 userName:       req.body.userName,
-                password:       req.body.password,
-                userRole:       req.body.userRole,
+                password:       hashedPassword,
+                userRole:       req.body.userRole.toLowerCase(),
                 phoneNumber:    req.body.phoneNumber
             }
         );
