@@ -52,7 +52,8 @@ router.post('/', async (req, res, next) => {
         homeLocation:       req.body.homeLocation,
         specificLocation:   req.body.specificLocation,
         available:          req.body.available,
-        servicable:         req.body.servicable
+        servicable:         req.body.servicable,
+        possessedBy:        ''
     });
     
     try {
@@ -93,8 +94,10 @@ router.delete('/delete', async (req, res, next) => {
 router.patch('/signout', async (req, res, next) => {
     try {
         const itemsSignedOut = await Item.updateMany(
-            { _id: { $in: req.body } }, 
-            { available: false }
+            
+            { _id: { $in: req.body.itemIds } }, 
+            { available: false, 
+              possessedBy: req.body.user }
         );
         res.json(itemsSignedOut);
     } catch(err) {
@@ -110,7 +113,8 @@ router.patch('/signin', async (req, res, next) => {
     try {
         const itemsSignedIn = await Item.updateMany(
             { _id: { $in: req.body } }, 
-            { available: true }
+            { available: true,
+              possessedBy: '' }
         );
         res.json(itemsSignedIn);
     } catch(err) {

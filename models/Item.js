@@ -26,6 +26,9 @@ const ItemSchema = mongoose.Schema({
     },
     servicable: {
         type: Boolean
+    },
+    possessedBy: {
+        type: String
     }
 });
 
