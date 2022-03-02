@@ -10,20 +10,23 @@ const UserSchema = mongoose.Schema({
         required: true
     },
     userName: {
-        type: String
-        //not required for profiles but required for custodians and admins
+        type: String,
+        required: true
 
     },
     password: {
-        type: String
+        type: String,
+        default: ''
         //not required for profiles but required for custodians and admins
         //encrypted/hashed
     },
     userRole: {
-        type: String
+        type: String,
+        required: true
     },
     phoneNumber: {
-        type: String
+        type: String,
+        required: true
     }
 });
 

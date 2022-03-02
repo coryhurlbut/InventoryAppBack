@@ -4,15 +4,23 @@ const Joi = require('@hapi/joi');
 const registerValidation = (data) => {
     const schema = Joi.object({
         firstName: Joi.string()
+            .trim()
             .min(1)
+            .max(25)
+            .regex(/[a-zA-Z]/)
             .required(),
         lastName: Joi.string()
+            .trim()
             .min(1)
+            .max(25)
+            .regex(/[a-zA-Z]/)
             .required(),
         userName: Joi.string()
-            .min(6),
+            .min(6)
+            .required(),
         password: Joi.string()
-            .min(6),
+            .default('')
+            .allow('', null),       //Needed to not error on user accounts that have '' as a password
         userRole: Joi.string()
             .required(),
         phoneNumber: Joi.string()
