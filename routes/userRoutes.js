@@ -83,18 +83,23 @@ router.post('/', verify, async (req, res, next) => {
     };
 });
 
-//Deletes a User
-router.delete('/:id', verify, async (req, res, next) => {
+//Deletes a User. Input is JSON array of IDs
+router.delete('/delete', verify, async (req, res, next) => {
     try {
-        if (req.user.user.user._id === req.params.id) {
-            throw req.user.user.user;
-        };
-        const removedUser = await User.deleteOne({_id: req.params.id});
-        res.json(removedUser);
+        let userIds = [];
+        req.body.forEach(userId => {
+            userIds.push(userId)
+            if (req.user.user.user._id === userId) {
+                throw req.user.user.user;
+            };
+        });
+        
+        const removedUsers = await User.deleteMany({_id: { $in: req.body} });
+        res.json(removedUsers);
     } catch (err) { 
         err.message = `Could not delete user ${err._id}`;
         err.status = 400;
-        err.instance = `/users/${req.params.id}`;
+        err.instance = `/users/delete`;
         next(err);
     };
 });
