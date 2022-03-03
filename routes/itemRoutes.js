@@ -6,7 +6,7 @@ const verify        = require('./verifyToken');
 //Gets all available items
 router.get('/available', async (req, res, next) => {
     try {
-        const items = await Item.find().where({ available: true }).where({ servicable: true });
+        const items = await Item.find().where({ available: true });
         res.json(items);
     } catch(err) {
         err.message = "Could not get available items";
@@ -52,7 +52,6 @@ router.post('/', async (req, res, next) => {
         homeLocation:       req.body.homeLocation,
         specificLocation:   req.body.specificLocation,
         available:          req.body.available,
-        servicable:         req.body.servicable,
         possessedBy:        ''
     });
     
@@ -137,8 +136,7 @@ router.patch('/:id', async (req, res, next) => {
                 notes:              req.body.notes,
                 homeLocation:       req.body.homeLocation,
                 specificLocation:   req.body.specificLocation,
-                available:          req.body.available,
-                servicable:         req.body.servicable
+                available:          req.body.available
             }
         );
         res.json(updatedItem);
