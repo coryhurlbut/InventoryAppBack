@@ -19,9 +19,6 @@ const AdminLogSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    notes: {
-        type: String
-    },
     date: {
         type: Date,
         default: Date.now

@@ -49,8 +49,7 @@ router.post('/', verify, async (req, res, next) => {
         userId:     req.body.userId,
         adminId:    req.body.adminId,
         action:     req.body.action,
-        content:    req.body.content,
-        notes:      req.body.notes
+        content:    req.body.content
     });
 
     try {
