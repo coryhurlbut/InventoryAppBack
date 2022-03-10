@@ -57,7 +57,7 @@ router.post('/', verify, async (req, res, next) => {
     if (req.body.password !== '') {
         //hash password
         const salt = await bcrypt.genSalt(10);
-        const password = await bcrypt.hash(req.body.password, salt);
+        password = await bcrypt.hash(req.body.password, salt);
     };    
     
     //create new user
