@@ -32,6 +32,8 @@ const registerValidation = (data) => {
             .max(14)
             .regex(/(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}/)
             .required(),
+        status: Joi.string()
+            .required()
     });
     return schema.validate(data);
 };
