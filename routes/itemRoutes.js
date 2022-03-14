@@ -1,7 +1,8 @@
-const express       = require('express');
-const router        = express.Router();
-const Item          = require('../models/Item');
-const verify        = require('./verifyToken');
+const express               = require('express');
+const router                = express.Router();
+const Item                  = require('../models/Item');
+const verify                = require('./verifyToken');
+const { itemValidation }    = require('../validation');
 
 //Gets all available items
 router.get('/available', async (req, res, next) => {
@@ -44,6 +45,16 @@ router.get('/item/:id', async (req, res, next) => {
 
 //Creates an item. Input is JSON object that must meet Item model description
 router.post('/', async (req, res, next) => {
+    //validate input data
+    const {error} = itemValidation(req.body);
+    console.log(error);
+    if (error != undefined) {
+        error.message = error.details[0].message;
+        error.status = 400;
+        next(error);
+        return;
+    };
+
     const item = new Item({
         name:               req.body.name,
         description:        req.body.description,

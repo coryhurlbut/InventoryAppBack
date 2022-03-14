@@ -48,7 +48,7 @@ router.post('/', verify, async (req, res, next) => {
     const userExists = await User.find().where({userName: req.body.userName});
     if (userExists.length !== 0) {
         let err = new Error();
-        err.message = 'User already exists';
+        err.message = 'User already exists. Please try again with a differnt userName.';
         err.status = 400;
         next(err);
         return;

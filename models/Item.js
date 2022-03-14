@@ -9,20 +9,24 @@ const ItemSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    serialNumber: {
-        type: String
-    },
-    homeLocation: {
-        type: String
-    },
-    specificLocation: {
-        type: String
-    },
     notes: {
         type: String
     },
+    serialNumber: {
+        type: String,
+        required: true
+    },
+    homeLocation: {
+        type: String,
+        required: true
+    },
+    specificLocation: {
+        type: String,
+        required: true
+    },
     available: {
-        type: Boolean
+        type: Boolean,
+        required: true
     },
     possessedBy: {
         type: String

@@ -7,16 +7,19 @@ const registerValidation = (data) => {
             .trim()
             .min(1)
             .max(25)
-            .regex(/[a-zA-Z]/)
+            .regex(/[a-zA-Z-]/)
             .required(),
         lastName: Joi.string()
             .trim()
             .min(1)
             .max(25)
-            .regex(/[a-zA-Z]/)
+            .regex(/[a-zA-Z-]/)
             .required(),
         userName: Joi.string()
+            .trim()
             .min(6)
+            .max(25)
+            .regex(/[a-zA-Z0-9_-]/)
             .required(),
         password: Joi.string()
             .default('')
@@ -24,8 +27,56 @@ const registerValidation = (data) => {
         userRole: Joi.string()
             .required(),
         phoneNumber: Joi.string()
-            .length(10)
+            .trim()
+            .min(10)
+            .max(14)
+            .regex(/(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}/)
             .required(),
+    });
+    return schema.validate(data);
+};
+
+//Register item validation
+const itemValidation = (data) => {
+    const schema = Joi.object({
+        name: Joi.string()
+            .trim()
+            .min(1)
+            .max(25)
+            .regex(/[a-zA-Z0-9-']/)
+            .required(),
+        description: Joi.string()
+            .trim()
+            .min(1)
+            .max(25)
+            .regex(/[a-zA-Z0-9-']/)
+            .required(),
+        serialNumber: Joi.string()
+            .trim()
+            .min(1)
+            .max(25)
+            .regex(/[a-zA-Z0-9-]/)
+            .required(),
+        notes: Joi.string()
+            .default('')
+            .allow('', null),       //Needed to not error on user accounts that have '' as a password
+        homeLocation: Joi.string()
+            .trim()
+            .min(1)
+            .max(15)
+            .regex(/[a-zA-Z0-9-]/)
+            .required(),
+        specificLocation: Joi.string()
+            .trim()
+            .min(1)
+            .max(15)
+            .regex(/[a-zA-Z0-9-]/)
+            .required(),
+        available: Joi.boolean()
+            .required(),
+        possessedBy: Joi.string() //Requirements of username for user
+            .default('')
+            .allow('', null), 
     });
     return schema.validate(data);
 };
@@ -36,11 +87,12 @@ const loginValidation = data => {
             .min(6)
             .required(),
         password: Joi.string()
-            .min(6)
+            .min(8)
             .required(),
     });
     return schema.validate(data);
 };
 
 module.exports.registerValidation = registerValidation;
+module.exports.itemValidation = itemValidation;
 module.exports.loginValidation = loginValidation;
