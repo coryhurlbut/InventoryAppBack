@@ -68,13 +68,8 @@ router.post('/login', async (req, res, next) => {
         return;
     };
 
-    //Temperary Fix
-    const salt = await bcrypt.genSalt(10);
-    let password = await bcrypt.hash(req.body.password, salt);
-
     //Check if password is correct
-    //let validPassword = bcrypt.compareSync(req.body.password, user.password);
-    let validPassword = bcrypt.compareSync(req.body.password, password);
+    let validPassword = bcrypt.compareSync(req.body.password, user.password);
     
     if (!validPassword)  {
         err.message = "Password is incorrect";
