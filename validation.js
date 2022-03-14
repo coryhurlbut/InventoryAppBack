@@ -26,6 +26,8 @@ const registerValidation = (data) => {
         phoneNumber: Joi.string()
             .length(10)
             .required(),
+        status: Joi.string()
+            .required()
     });
     return schema.validate(data);
 };

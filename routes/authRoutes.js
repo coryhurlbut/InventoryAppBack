@@ -48,6 +48,8 @@ router.delete('/logout', (req, res, next) => {
 });
 
 router.post('/login', async (req, res, next) => {
+    let err = new Error();
+
     //Validate input data
     const {error} = loginValidation(req.body);
     if (error) {
@@ -60,7 +62,6 @@ router.post('/login', async (req, res, next) => {
     //Check if user exists
     const user = await User.findOne({userName: req.body.userName});
     if (user === null) {
-        let err = new Error();
         err.message = "Username is incorrect";
         err.status = 400;
         next(err);
@@ -70,12 +71,19 @@ router.post('/login', async (req, res, next) => {
     //Check if password is correct
     let validPassword = bcrypt.compareSync(req.body.password, user.password);
     if (!validPassword)  {
-        let err = new Error();
         err.message = "Password is incorrect";
         err.status = 400;
         next(err);
         return;
     };
+
+    //Checks if the user's account is activated or not
+    if (user.status !== 'active') {
+        err.message = "User is not activated";
+        err.status = 400;
+        next(err);
+        return;
+    }
 
     //Create and assign a token
     const accessToken = generateAccessToken(user);

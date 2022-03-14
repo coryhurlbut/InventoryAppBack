@@ -27,6 +27,10 @@ const UserSchema = mongoose.Schema({
     phoneNumber: {
         type: String,
         required: true
+    },
+    status: {
+        type: String,
+        required: true
     }
 });
 
