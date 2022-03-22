@@ -7,8 +7,9 @@ const {loginValidation} = require('../validation');
 
 let refreshTokens = [];
 
+//TODO: refactor {user: user} to only be user
 function generateAccessToken(user) {
-    return jwt.sign({user: user}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5s' });
+    return jwt.sign({user: user}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '600s' });
 };
 
 router.post('/refresh', (req, res, next) => {
@@ -88,6 +89,7 @@ router.post('/login', async (req, res, next) => {
 
     //Create and assign a token
     const accessToken = generateAccessToken(user);
+    //TODO: get rid of {user: user} to simplify object structure
     const refreshToken = jwt.sign({user: user}, process.env.REFRESH_TOKEN_SECRET);
     refreshTokens.push(refreshToken);
     res.json({ accessToken: accessToken, refreshToken: refreshToken, user: user});

@@ -47,7 +47,6 @@ router.get('/item/:id', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
     //validate input data
     const {error} = itemValidation(req.body);
-    console.log(error);
     if (error != undefined) {
         error.message = error.details[0].message;
         error.status = 400;
@@ -76,16 +75,6 @@ router.post('/', async (req, res, next) => {
         next(err);
     };
 });
-
-// //Deletes an item
-// router.delete('/:id', verify, async (req, res) => {
-//     try {
-//         const removedItem = await Item.deleteOne({_id: req.params.id});
-//         res.json(removedItem)
-//     } catch (err) { 
-//         res.json({ message: err });
-//     };
-// });
 
 //Deletes items. Input is JSON array of IDs
 router.delete('/delete', async (req, res, next) => {
