@@ -47,7 +47,7 @@ router.get('/item/:id', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
     //validate input data
     const {error} = itemValidation(req.body);
-    console.log(error);
+    
     if (error != undefined) {
         error.message = error.details[0].message;
         error.status = 400;
