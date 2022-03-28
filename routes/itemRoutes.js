@@ -77,16 +77,6 @@ router.post('/', async (req, res, next) => {
     };
 });
 
-// //Deletes an item
-// router.delete('/:id', verify, async (req, res) => {
-//     try {
-//         const removedItem = await Item.deleteOne({_id: req.params.id});
-//         res.json(removedItem)
-//     } catch (err) { 
-//         res.json({ message: err });
-//     };
-// });
-
 //Deletes items. Input is JSON array of IDs
 router.delete('/delete', async (req, res, next) => {
     try {
