@@ -20,7 +20,7 @@ router.post('/refresh', (req, res, next) => {
         err.status = 401;
         next(err);
         return;
-    };
+    }
 
     if (!refreshTokens.includes(refreshToken)) {
         let err = new Error();
@@ -28,7 +28,7 @@ router.post('/refresh', (req, res, next) => {
         err.status = 403;
         next(err);
         return;
-    };
+    }
 
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
         if (err) {
@@ -36,7 +36,7 @@ router.post('/refresh', (req, res, next) => {
             err.status = 403;
             next(err);
             return;
-        };
+        }
 
         const accessToken = generateAccessToken(user);
         res.json({accessToken: accessToken, user: user.user});
@@ -58,7 +58,7 @@ router.post('/login', async (req, res, next) => {
         error.status = 400;
         next(error);
         return;
-    };
+    }
 
     //Check if user exists
     const user = await User.findOne({userName: req.body.userName});
@@ -67,7 +67,7 @@ router.post('/login', async (req, res, next) => {
         err.status = 400;
         next(err);
         return;
-    };
+    }
 
     //Check if password is correct
     let validPassword = bcrypt.compareSync(req.body.password, user.password);
@@ -77,7 +77,7 @@ router.post('/login', async (req, res, next) => {
         err.status = 400;
         next(err);
         return;
-    };
+    }
 
     //Checks if the user's account is activated or not
     if (user.status !== 'active') {

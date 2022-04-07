@@ -14,7 +14,7 @@ router.get('/available', async (req, res, next) => {
         err.status = 500;
         err.instance = `/items/available`;
         next(err);
-    };
+    }
 });
 
 //Gets all unavailable items
@@ -27,7 +27,7 @@ router.get('/unavailable', async (req, res, next) => {
         err.status = 500;
         err.instance = `/items/unavailable`;
         next(err);
-    };
+    }
 });
 
 //Gets item by id
@@ -40,7 +40,7 @@ router.get('/item/:id', async (req, res, next) => {
         err.status = 400;
         err.instance = `/items/item/${res.params.id}`;
         next(err);
-    };
+    }
 });
 
 //Creates an item. Input is JSON object that must meet Item model description
@@ -53,7 +53,7 @@ router.post('/', async (req, res, next) => {
         error.status = 400;
         next(error);
         return;
-    };
+    }
 
     const item = new Item({
         name:               req.body.name,
@@ -74,7 +74,7 @@ router.post('/', async (req, res, next) => {
         err.status = 400;
         err.instance = `/items/`;
         next(err);
-    };
+    }
 });
 
 //Deletes items. Input is JSON array of IDs
@@ -87,7 +87,7 @@ router.delete('/delete', async (req, res, next) => {
         err.status = 400;
         err.instance = `/items/delete`;
         next(err);
-    };
+    }
 });
 
 //Signs out items. Input is JSON array of IDs
@@ -105,7 +105,7 @@ router.patch('/signout', async (req, res, next) => {
         err.status = 400;
         err.instance = `/items/signout`;
         next(err);
-    };
+    }
 });
 
 //Signs in items. Input is JSON array of IDs
@@ -122,7 +122,7 @@ router.patch('/signin', async (req, res, next) => {
         err.status = 400;
         err.instance = `/items/signin`;
         next(err);
-    };
+    }
 });
 
 //Updates an item. Input is item Id url encoded
@@ -146,7 +146,7 @@ router.patch('/:id', async (req, res, next) => {
         err.status = 400;
         err.instance = `/items/${req.params.id}`;
         next(err);
-    };
+    }
 });
 
 module.exports = router;

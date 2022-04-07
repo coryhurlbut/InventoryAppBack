@@ -27,7 +27,7 @@ var cert    = fs.readFileSync(__dirname + '/certs/selfsigned.crt');
 var credentials = {
     key: key,
     cert: cert
-};
+}
 
 //Middlewares
 app.use(express.json());    //Formats all response data to JSON

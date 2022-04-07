@@ -36,7 +36,7 @@ const registerValidation = (data) => {
             .required()
     });
     return schema.validate(data);
-};
+}
 
 //Register item validation
 const itemValidation = (data) => {
@@ -81,7 +81,7 @@ const itemValidation = (data) => {
             .allow('', null), 
     });
     return schema.validate(data);
-};
+}
 
 const loginValidation = data => {
     const schema = Joi.object({
@@ -93,7 +93,7 @@ const loginValidation = data => {
             .required(),
     });
     return schema.validate(data);
-};
+}
 
 module.exports.registerValidation = registerValidation;
 module.exports.itemValidation = itemValidation;

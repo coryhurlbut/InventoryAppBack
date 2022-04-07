@@ -12,15 +12,15 @@ module.exports = function (req, res, next) {
         err.message = "No token sent";
         err.status = 401;
         next(err);
-    };
+    }
 
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
         if (err) {
             err.message = "Invalid token";
             err.status = 403;
             next(err);
-        };
+        }
         req.user = user;
         next();
     });
-};
+}

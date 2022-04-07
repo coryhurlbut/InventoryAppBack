@@ -26,7 +26,7 @@ router.get('/item/:id', verify, async (req, res, next) => {
         err.status = 400;
         err.instance = `/logs/adminLogs/items/${req.params.id}`;
         next(err);
-    };
+    }
 });
 
 //Gets adminLogs by user id
@@ -39,7 +39,7 @@ router.get('/user/:id', verify, async (req, res, next) => {
         err.status = 400;
         err.instance = `/logs/adminLogs/user/${req.params.id}`;
         next(err);
-    };
+    }
 });
 
 //Creates an adminLog 
@@ -61,7 +61,7 @@ router.post('/', verify, async (req, res, next) => {
         err.status = 400;
         err.instance = `/logs/adminLogs/`;
         next(err);
-    };
+    }
 });
 
 //Deletes an adminLog by Id
@@ -74,7 +74,7 @@ router.delete('/:id', verify, async (req, res, next) => {
         err.status = 400;
         err.instance = `/logs/adminLogs/${req.params.id}`;
         next(err);
-    };
+    }
 });
 
 module.exports = router;
