@@ -54,6 +54,16 @@ router.post('/new', async (req, res, next) => {
         return;
     }
 
+    //check if user exists  something is wrong with this, getting this code when i do not submit duplicate
+    const userExists = await User.find().where({userName: req.body.userName});
+    if (userExists.length !== 0) {
+        let err = new Error();
+        err.message = 'User already exists. Please try again with a differnt userName.';
+        err.status = 400;
+        next(err);
+        return;
+    }
+
     const user = new User({
         firstName:      req.body.firstName,
         lastName:       req.body.lastName,
