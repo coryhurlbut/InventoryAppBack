@@ -45,12 +45,10 @@ router.get('/:id', verify, async (req, res, next) => {
 });
 //the modified create user route for new site visitors to request an account
 router.post('/new', async (req, res, next) => {
-    console.log('my name jeff');
     //validate input data
     const {error} = registerValidation(req.body);
     if (error != undefined) {
         error.message = error.details[0].message;
-        console.log(error.details[0].message);
         error.status = 400;
         next(error);
         return;
@@ -69,7 +67,6 @@ router.post('/new', async (req, res, next) => {
     //save new user
     try {
         const savedUser = await user.save();
-        console.log(savedUser);
         res.json(savedUser);
     }
     catch (err) {
