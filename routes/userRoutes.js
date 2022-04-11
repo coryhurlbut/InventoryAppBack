@@ -8,7 +8,7 @@ const { registerValidation }    = require('../validation');
 //Gets all users
 router.get('/', verify, async (req, res, next) => {
     try {
-        const users = await User.find();
+        const users = await User.find().where({ status : { $in: ['active', 'inactive' ] } });
         res.json(users);
     } catch (err) {
         err.message = "Could not get users";
@@ -27,6 +27,18 @@ router.get('/active', verify, async (req, res, next) => {
         err.message = "Could not get active users";
         err.status = 500;
         err.instance = `/users/active`;
+        next(err);
+    }
+});
+//route for users to request a user account
+router.get('/pending', verify, async (req, res, next) => {
+    try{
+        const users = await User.find().where({ status: 'pending' });
+        res.json(users);
+    }catch (err){
+        err.message = 'Could not get pending users';
+        err.status = 500;
+        err.instance = '/users/pending';
         next(err);
     }
 });
