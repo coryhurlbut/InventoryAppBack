@@ -6,7 +6,7 @@ const verify    = require('./verifyToken');
 //Gets all admin logs
 router.get('/', verify, async (req, res, next) => {
     try {
-        const adminLogs = await AdminLog.find();
+        const adminLogs = await AdminLog.find().sort({date: 'desc'});
         res.json(adminLogs);
     } catch (err) {
         err.message = "Could not get adminLog";
