@@ -30,7 +30,7 @@ router.get('/active', verify, async (req, res, next) => {
         next(err);
     }
 });
-//route for users to request a user account
+//route for admin to see pending users
 router.get('/pending', verify, async (req, res, next) => {
     try{
         const users = await User.find().where({ status: 'pending' });
