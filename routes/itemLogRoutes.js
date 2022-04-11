@@ -7,7 +7,7 @@ const verify        = require('./verifyToken');
 //Gets all item logs
 router.get('/', verify, async (req, res, next) => {
     try {
-        const itemLogs = await ItemLog.find();
+        const itemLogs = await ItemLog.find().sort({date: 'desc'});
         res.json(itemLogs);
     } catch (err) {
         err.message = "Could not get itemLog";
