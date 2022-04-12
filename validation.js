@@ -41,11 +41,16 @@ const registerValidation = (data) => {
 //Register item validation
 const itemValidation = (data) => {
     const schema = Joi.object({
+        itemNumber: Joi.string()
+            .trim()
+            .length(9)
+            .regex(/[a-zA-Z0-9-]/)
+            .required(),
         name: Joi.string()
             .trim()
             .min(1)
             .max(25)
-            .regex(/[a-zA-Z0-9-']/)
+            .regex(/[a-zA-Z0-9-' ]/)
             .required(),
         description: Joi.string()
             .trim()

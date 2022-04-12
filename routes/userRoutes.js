@@ -43,15 +43,15 @@ router.get('/pending', verify, async (req, res, next) => {
     }
 });
 
-//Gets user by id
-router.get('/:id', verify, async (req, res, next) => {
+//Gets user by userName
+router.get('/:userName', verify, async (req, res, next) => {
     try {
-        const user = await User.findById(req.params.id);
+        const user = await User.find().where({ userName: req.params.userName });
         res.json(user);
     } catch (err) {
         err.message = "Could not get user";
         err.status = 400;
-        err.instance = `/users/${req.params.id}`;
+        err.instance = `/users/${req.params.userName}`;
         next(err);
     }
 });
@@ -155,18 +155,20 @@ router.post('/', verify, async (req, res, next) => {
 //Deletes a User. Input is JSON array of IDs
 router.delete('/delete', verify, async (req, res, next) => {
     try {
-        let userIds = [];
-        req.body.forEach(userId => {
-            userIds.push(userId)
-            if (req.user.user.user._id === userId) {
+        let users = [];
+
+        //Throws error if user is trying to edit themselves.
+        req.body.forEach(userName => {
+            users.push(userName)
+            if (req.user.user.user.userName === userName) {
                 throw req.user.user.user;
             }
         });
         
-        const removedUsers = await User.deleteMany({_id: { $in: req.body} });
+        const removedUsers = await User.deleteMany({userName: { $in: req.body} });
         res.json(removedUsers);
     } catch (err) { 
-        err.message = `Could not delete user ${err._id}`;
+        err.message = `Could not delete user ${err.userName}`;
         err.status = 400;
         err.instance = `/users/delete`;
         next(err);
@@ -177,7 +179,7 @@ router.delete('/delete', verify, async (req, res, next) => {
 router.patch('/activate', verify, async (req, res, next) => {
     try {
         const deactivatedUsers = await User.updateMany(
-            {_id: { $in: req.body} },
+            { userName: { $in: req.body} },
             { status: 'active' }
         );
 
@@ -193,14 +195,14 @@ router.patch('/activate', verify, async (req, res, next) => {
 //deactivates user accounts
 router.patch('/deactivate', verify, async (req, res, next) => {
     try {
-        req.body.forEach(userId => {
-            if (req.user.user.user._id === userId) {
+        req.body.forEach(userName => {
+            if (req.user.user.user.userName === userName) {
                 throw req.user.user.user;
             }
         });
 
         const deactivatedUsers = await User.updateMany(
-            {_id: { $in: req.body} },
+            { userName: { $in: req.body} },
             { status: 'inactive' }
         );
 
@@ -214,7 +216,7 @@ router.patch('/deactivate', verify, async (req, res, next) => {
 });
 
 //Updates a user
-router.patch('/:id', verify, async (req, res, next) => {
+router.patch('/:userName', verify, async (req, res, next) => {
     try {
         let user = {};
         if (req.body.hasPassword && req.body.password === '') {
@@ -254,7 +256,7 @@ router.patch('/:id', verify, async (req, res, next) => {
         }
 
         const updatedUser = await User.updateOne(
-            { _id: req.params.id },
+            { userName: req.params.userName },
             {...user}
         );
 
@@ -262,7 +264,7 @@ router.patch('/:id', verify, async (req, res, next) => {
     } catch (err) {
         err.message = "Could not edit user";
         err.status = 400;
-        err.instance = `/users/${req.params.id}`;
+        err.instance = `/users/${req.params.userName}`;
         next(err);
     }
 });

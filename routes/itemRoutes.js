@@ -20,7 +20,7 @@ router.get('/available', async (req, res, next) => {
 //Gets all unavailable items
 router.get('/unavailable', async (req, res, next) => {
     try {
-        const items = await Item.find({available: false});
+        const items = await Item.find({ available: false });
         res.json(items);
     } catch(err) {
         err.message = "Could not get unavailable items";
@@ -31,14 +31,14 @@ router.get('/unavailable', async (req, res, next) => {
 });
 
 //Gets item by id
-router.get('/item/:id', async (req, res, next) => {
+router.get('/item/:itemNum', async (req, res, next) => {
     try {
-        const item = await Item.findById(req.params.id);
+        const item = await Item.find().where({ itemNumber: req.params.itemNum });
         res.json(item);
     } catch(err) {
-        err.message = `Could not get item ${req.params.id}.`;
+        err.message = `Could not get item ${req.params.itemNum}.`;
         err.status = 400;
-        err.instance = `/items/item/${res.params.id}`;
+        err.instance = `/items/item/${req.params.itemNum}`;
         next(err);
     }
 });
@@ -55,7 +55,18 @@ router.post('/', async (req, res, next) => {
         return;
     }
 
+    //check if item exists
+    const itemExists = await Item.find().where({itemNumber: req.body.itemNumber});
+    if (itemExists.length !== 0) {
+        let err = new Error();
+        err.message = 'Item already exists. Please try again with a differnt ItemNumber.';
+        err.status = 400;
+        next(err);
+        return;
+    };
+
     const item = new Item({
+        itemNumber:         req.body.itemNumber,
         name:               req.body.name,
         description:        req.body.description,
         serialNumber:       req.body.serialNumber,
@@ -80,7 +91,7 @@ router.post('/', async (req, res, next) => {
 //Deletes items. Input is JSON array of IDs
 router.delete('/delete', async (req, res, next) => {
     try {
-        const removedItems = await Item.deleteMany({_id: { $in: req.body} });
+        const removedItems = await Item.deleteMany({ itemNumber: { $in: req.body} });
         res.json(removedItems);
     } catch(err) {
         err.message = "Could not delete items";
@@ -95,7 +106,7 @@ router.patch('/signout', async (req, res, next) => {
     try {
         const itemsSignedOut = await Item.updateMany(
             
-            { _id: { $in: req.body.itemIds } }, 
+            { itemNumber: { $in: req.body.items } }, 
             { available: false, 
               possessedBy: req.body.user }
         );
@@ -112,7 +123,7 @@ router.patch('/signout', async (req, res, next) => {
 router.patch('/signin', async (req, res, next) => {
     try {
         const itemsSignedIn = await Item.updateMany(
-            { _id: { $in: req.body } }, 
+            { itemNumber: { $in: req.body } }, 
             { available: true,
               possessedBy: '' }
         );
@@ -126,10 +137,10 @@ router.patch('/signin', async (req, res, next) => {
 });
 
 //Updates an item. Input is item Id url encoded
-router.patch('/:id', async (req, res, next) => {
+router.patch('/:itemNum', async (req, res, next) => {
     try {
         const updatedItem = await Item.updateOne(
-            { _id: req.params.id }, 
+            { itemNumber: req.params.itemNum }, 
             {
                 name:               req.body.name,
                 description:        req.body.description,
@@ -144,7 +155,7 @@ router.patch('/:id', async (req, res, next) => {
     } catch(err) {
         err.message = "Could not update item";
         err.status = 400;
-        err.instance = `/items/${req.params.id}`;
+        err.instance = `/items/${req.params.itemNum}`;
         next(err);
     }
 });
