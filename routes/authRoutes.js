@@ -6,6 +6,9 @@ const verify            = require('./verifyToken');
 const {loginValidation} = require('../validation');
 
 let refreshTokens = [];
+let loginAttempts = 0;
+const MAX_LOGIN_ATTEMPTS = 3;
+const MAX_LOGIN_TIMEOUT = 900000    // minutes * 60 * 1000
 
 //TODO: refactor {user: user} to only be user
 function generateAccessToken(user) {
@@ -48,12 +51,30 @@ router.delete('/logout', (req, res, next) => {
     res.sendStatus(204);
 });
 
+//Sets timer to prevent brute force attacks, 15 minutes
+function clearLoginAttemptTimer(){
+    setTimeout(() => 
+        {loginAttempts = 0}, 
+        MAX_LOGIN_TIMEOUT
+    );
+}
+
 router.post('/login', async (req, res, next) => {
     let err = new Error();
+    loginAttempts += 1;
+
+    //pass error message up to log in to disable login modal
+    if(loginAttempts > MAX_LOGIN_ATTEMPTS) {
+        clearLoginAttemptTimer();
+        err.message = "Max Login Attemp Exceeded. Please try again later.";
+        err.status = 400;
+        next(err);
+        return;
+    }
 
     //Validate input data
     const {error} = loginValidation(req.body);
-    if (error) {
+    if(error) {
         error.message = error.details[0].message;
         error.status = 400;
         next(error);
@@ -61,38 +82,43 @@ router.post('/login', async (req, res, next) => {
     }
 
     //Check if user exists
-    const user = await User.findOne({userName: req.body.userName});
-    if (user === null) {
-        err.message = "Username is incorrect";
+    await User.findOne({userName: req.body.userName})
+    .then((user) => {
+        
+        if(user === null) {
+            err.message = "Username/Password is incorrect";
+            err.status = 400;
+            next(err);
+            return;
+        }
+        //Check if password is correct
+        let validPassword = bcrypt.compareSync(req.body.password, user.password);
+        if(!validPassword) {
+            err.message = "Username/Password is incorrect";
+            err.status = 400;
+            next(err);
+            return;
+        }
+        //Checks if the user's account is activated or not
+        if(user.status !== 'active') {
+            err.message = "User is not activated";
+            err.status = 400;
+            next(err);
+            return;
+        }
+        //Create and assign a token
+        const accessToken = generateAccessToken(user);
+        //TODO: get rid of {user: user} to simplify object structure
+        const refreshToken = jwt.sign({user: user}, process.env.REFRESH_TOKEN_SECRET);
+        refreshTokens.push(refreshToken);
+        res.json({ accessToken: accessToken, refreshToken: refreshToken, user: user});
+    })
+    .catch(async (errMess) => {  
+        err.message = errMess.message;
         err.status = 400;
         next(err);
-        return;
-    }
-
-    //Check if password is correct
-    let validPassword = bcrypt.compareSync(req.body.password, user.password);
-    
-    if (!validPassword)  {
-        err.message = "Password is incorrect";
-        err.status = 400;
-        next(err);
-        return;
-    }
-
-    //Checks if the user's account is activated or not
-    if (user.status !== 'active') {
-        err.message = "User is not activated";
-        err.status = 400;
-        next(err);
-        return;
-    }
-
-    //Create and assign a token
-    const accessToken = generateAccessToken(user);
-    //TODO: get rid of {user: user} to simplify object structure
-    const refreshToken = jwt.sign({user: user}, process.env.REFRESH_TOKEN_SECRET);
-    refreshTokens.push(refreshToken);
-    res.json({ accessToken: accessToken, refreshToken: refreshToken, user: user});
+        return;         
+    });
 });
 
 module.exports = router;
