@@ -59,59 +59,69 @@ function clearLoginAttemptTimer(){
     );
 }
 
-router.post('/login', async (req, res, next) => {
-    let err = new Error();
-    loginAttempts += 1;
-
+function checkMaxLoginAttempt(err) {
     //pass error message up to log in to disable login modal
     if(loginAttempts > MAX_LOGIN_ATTEMPTS) {
         clearLoginAttemptTimer();
+
         err.message = "Max Login Attemp Exceeded. Please try again later.";
         err.status = 400;
-        next(err);
-        return;
-    }
 
-    //Validate input data
-    const {error} = loginValidation(req.body);
-    if(error) {
-        error.message = error.details[0].message;
-        error.status = 400;
-        next(error);
-        return;
+        return true;
     }
+    return false;
+}
+
+router.post('/login', async (req, res, next) => {
+    let err = new Error();
+    loginAttempts += 1;
 
     //Check if user exists
     await User.findOne({userName: req.body.userName})
     .then((user) => {
         
         if(user === null) {
-            err.message = "Username/Password is incorrect";
-            err.status = 400;
+            if(!checkMaxLoginAttempt(err)) {
+                err.message = "Username/Password is incorrect";
+                err.status = 400;
+            }
+
             next(err);
             return;
         }
+
         //Check if password is correct
         let validPassword = bcrypt.compareSync(req.body.password, user.password);
         if(!validPassword) {
-            err.message = "Username/Password is incorrect";
-            err.status = 400;
+            if(!checkMaxLoginAttempt(err)) {
+                err.message = "Username/Password is incorrect";
+                err.status = 400;
+            }
+
             next(err);
             return;
         }
+
         //Checks if the user's account is activated or not
         if(user.status !== 'active') {
-            err.message = "User is not activated";
-            err.status = 400;
+            if(!checkMaxLoginAttempt(err)) {
+                err.message = "User is not activated";
+                err.status = 400;
+            }
+
             next(err);
             return;
         }
+        
         //Create and assign a token
         const accessToken = generateAccessToken(user);
         //TODO: get rid of {user: user} to simplify object structure
         const refreshToken = jwt.sign({user: user}, process.env.REFRESH_TOKEN_SECRET);
         refreshTokens.push(refreshToken);
         res.json({ accessToken: accessToken, refreshToken: refreshToken, user: user});
+
+        //If user successfully logs in, reset login attempts
+        loginAttempts = 0;
     })
     .catch(async (errMess) => {  
         err.message = errMess.message;
