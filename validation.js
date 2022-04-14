@@ -66,6 +66,7 @@ const itemValidation = (data) => {
             .required(),
         notes: Joi.string()
             .default('')
+            .max(100)
             .allow('', null),       //Needed to not error on user accounts that have '' as a password
         homeLocation: Joi.string()
             .trim()
