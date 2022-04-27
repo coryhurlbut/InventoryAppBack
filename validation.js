@@ -31,7 +31,7 @@ const registerValidation = (data) => {
             .trim()
             .min(10)
             .max(14)
-            .regex(/(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}/)
+            .regex(/\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}/)
             .required(),
         status: Joi.string()
             .required()
