@@ -23,6 +23,7 @@ const registerValidation = (data) => {
             .required(),
         password: Joi.string()
             .default('')
+            .regex(/[a-zA-Z0-9!@#$%^&*_+]+/)
             .allow('', null),       //Needed to not error on user accounts that have '' as a password
         userRole: Joi.string()
             .required(),
