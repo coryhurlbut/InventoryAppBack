@@ -5,10 +5,10 @@ const dotenv    = require('dotenv');
 const https     = require('https');
 const fs        = require('fs');
 const cors      = require('cors');
+const PROD_ENV  = true;  // change to false for test environment
 
 //Declare constants
 const httpsPort = 8000;
-const httpPort = 3000;
 
 //Import routes
 const authRoute         = require('./routes/authRoutes');
@@ -16,6 +16,7 @@ const userRoute         = require('./routes/userRoutes');
 const itemRoute         = require('./routes/itemRoutes');
 const itemLogRoute      = require('./routes/itemLogRoutes');
 const adminLogRoute     = require('./routes/adminLogRoutes');
+const res = require('express/lib/response');
 
 //Initialize express app and load environment variables
 app = express();
@@ -36,6 +37,9 @@ app.use(cors());            //Accepts all CORS requests
 app.options('*', cors());
 
 //Route Middlewares - routes requests with url indicated to route indicated
+app.use('/', (req, res) => {
+    res.send('Home');
+});
 app.use('/auth',            authRoute);
 app.use('/users',           userRoute);
 app.use('/items',           itemRoute);
@@ -60,8 +64,17 @@ app.use((error, req, res, next) => {
 });
 
 //Connect to DB
-mongoose.connect(process.env.DB_CONNECTION_PROD, { useNewUrlParser: true });
+if (PROD_ENV) {
+    mongoose.connect(process.env.DB_PROD_CONNECTION, {
+        useUnifiedTopology: true,
+        useNewUrlParser: true
+    }).catch(e => console.log(`[ERROR]: ${e}`));
+} else {
+    mongoose.connect(process.env.DB_TEST_CONNECTION, { useNewUrlParser: true });
+}
 
 //Create and run https server
 var httpsServer = https.createServer(credentials, app);
-httpsServer.listen(httpsPort);
+httpsServer.listen(httpsPort, () => {
+    console.log('Listening on port 8000');
+});
