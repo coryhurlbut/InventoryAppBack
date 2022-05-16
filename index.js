@@ -28,6 +28,7 @@ var credentials = {
     key: key,
     cert: cert
 }
+var CABundle = fs.readFileSync(__dirname + '/certs/rds-combined-ca-us-gov-bundle.pem');
 
 //Middlewares
 app.use(express.json());    //Formats all response data to JSON
@@ -59,7 +60,7 @@ app.use((error, req, res, next) => {
 });
 
 //Connect to DB
-mongoose.connect(process.env.DB_CONNECTION, { useNewUrlParser: true });
+mongoose.connect(process.env.DB_CONNECTION_PROD, { useNewUrlParser: true });
 
 //Create and run https server
 var httpsServer = https.createServer(credentials, app);
