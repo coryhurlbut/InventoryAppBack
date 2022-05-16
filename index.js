@@ -65,12 +65,12 @@ app.use((error, req, res, next) => {
 
 //Connect to DB
 if (PROD_ENV) {
-    mongoose.connect(process.env.DB_PROD_CONNECTION, {
+    mongoose.connect(process.env.DB_CONNECTION_PROD, {
         useUnifiedTopology: true,
         useNewUrlParser: true
     }).catch(e => console.log(`[ERROR]: ${e}`));
 } else {
-    mongoose.connect(process.env.DB_TEST_CONNECTION, { useNewUrlParser: true });
+    mongoose.connect(process.env.DB_CONNECTION_DEV, { useNewUrlParser: true });
 }
 
 //Create and run https server
