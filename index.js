@@ -37,9 +37,6 @@ app.use(cors());            //Accepts all CORS requests
 app.options('*', cors());
 
 //Route Middlewares - routes requests with url indicated to route indicated
-app.use('/', (req, res) => {
-    res.send('Home');
-});
 app.use('/auth',            authRoute);
 app.use('/users',           userRoute);
 app.use('/items',           itemRoute);
