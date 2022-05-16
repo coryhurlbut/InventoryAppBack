@@ -74,7 +74,7 @@ function checkMaxLoginAttempt(err) {
 
 router.post('/login', async (req, res, next) => {
     let err = new Error();
-    loginAttempts += 1;
+    loginAttempts = 1;
 
     //Check if user exists
     await User.findOne({userName: req.body.userName})
