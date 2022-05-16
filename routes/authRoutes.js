@@ -79,10 +79,10 @@ router.post('/login', async (req, res, next) => {
     //Check if user exists
     await User.findOne({userName: req.body.userName})
     .then((user) => {
-        
+        console.log(user)
         if(user === null) {
             if(!checkMaxLoginAttempt(err)) {
-                err.message = "Username/Password is incorrect";
+                err.message = "Username is incorrect";
                 err.status = 400;
             }
 
@@ -94,7 +94,7 @@ router.post('/login', async (req, res, next) => {
         let validPassword = bcrypt.compareSync(req.body.password, user.password);
         if(!validPassword) {
             if(!checkMaxLoginAttempt(err)) {
-                err.message = "Username/Password is incorrect";
+                err.message = "Password is incorrect";
                 err.status = 400;
             }
 
