@@ -79,7 +79,6 @@ router.post('/login', async (req, res, next) => {
     //Check if user exists
     await User.findOne({userName: req.body.userName})
     .then((user) => {
-        console.log(user)
         if(user === null) {
             if(!checkMaxLoginAttempt(err)) {
                 err.message = "Username is incorrect";

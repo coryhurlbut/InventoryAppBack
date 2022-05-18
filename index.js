@@ -5,7 +5,7 @@ const dotenv    = require('dotenv');
 const https     = require('https');
 const fs        = require('fs');
 const cors      = require('cors');
-const PROD_ENV  = true;  // change to false for test environment
+const PROD_ENV  = false;  // change to false for test environment
 
 //Declare constants
 const httpsPort = 8000;
