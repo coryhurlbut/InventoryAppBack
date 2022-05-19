@@ -64,7 +64,7 @@ app.use((error, req, res, next) => {
 if (PROD_ENV) {
     mongoose.connect(process.env.DB_CONNECTION_PROD, {
         ssl: true,
-        sslCA: CABundle,
+        sslCA: (__dirname + '/certs/rds-combined-ca-us-gov-bundle.pem'),
         useUnifiedTopology: true,
         useNewUrlParser: true
     }).catch(e => console.log(`[ERROR]: ${e}`));
