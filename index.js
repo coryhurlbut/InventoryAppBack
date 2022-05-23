@@ -23,8 +23,8 @@ app = express();
 dotenv.config();
 
 //Read selfsigned cert and key
-var key     = fs.readFileSync(__dirname + '/certs/selfsigned.key');
-var cert    = fs.readFileSync(__dirname + '/certs/selfsigned.crt');
+var key     = fs.readFileSync(__dirname + '/certs/key.pem');
+var cert    = fs.readFileSync(__dirname + '/certs/cert.pem');
 var credentials = {
     key: key,
     cert: cert
