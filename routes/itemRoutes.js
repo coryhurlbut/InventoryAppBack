@@ -4,6 +4,19 @@ const Item                  = require('../models/Item');
 const verify                = require('./verifyToken');
 const { itemValidation }    = require('../validation');
 
+//gets all items
+router.get('/', async(req, res, next) =>{
+    try{
+        const items = await Item.find();
+        res.json(items);
+    } catch(err){
+        err.message = "Could not get items";
+        err.status = 500;
+        err.instance = `/items/`;
+        next(err);
+    }
+})
+
 //Gets all available items
 router.get('/available', async (req, res, next) => {
     try {
