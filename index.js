@@ -77,4 +77,5 @@ if (PROD_ENV) {
 var httpsServer = https.createServer(credentials, app);
 httpsServer.listen(httpsPort, () => {
     console.log('Listening on port 8000');
+    return "Listening on port 8000";
 });
